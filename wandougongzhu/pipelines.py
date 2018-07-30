@@ -9,10 +9,6 @@ class WandougongzhuPipeline(object):
     def __init__(self, settings):
         self.settings = settings
 
-
-
-
-
     def process_item(self, item, spider):
         print(item)
         if spider.name == "wandou_spider":

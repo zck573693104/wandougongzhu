@@ -18,16 +18,20 @@ class woniuSplider(scrapy.Spider):
                }
     def start_requests(self):
         url = "https://m.wandougongzhu.cn/list/ajaxGoods"
-        myFormData = {'brand': '',
-                      'cat_id': '426',
-                      'page': '1',
-                      'sort': 'general',
-                      'promote': '',
-                      'seller': '',
-                      'count': '20',
-                      'cat': '426',
-                      }
-        yield scrapy.FormRequest(url,callback=self.parse_item,formdata=myFormData,headers=self.headers)
+        requests = []
+        for i in range(1, 20):
+            myFormData = {
+                'brand': '',
+                'cat_id': '426',
+                'page': str(i),
+                'sort': 'general',
+                'promote': '',
+                'seller': '',
+                'count': '20',
+                'cat': '426',
+            }
+
+            yield scrapy.FormRequest(url,callback=self.parse_item,formdata=myFormData,headers=self.headers)
 
 
     def parse_item(self,response):
