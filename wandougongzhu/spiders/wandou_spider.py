@@ -16,33 +16,38 @@ class woniuSplider(scrapy.Spider):
                'origin':'https://m.wandougongzhu.cn',
                'content-type':'application/x-www-form-urlencoded; charset=UTF-8'
                }
+    dict = {'is_crawl':True}
     def start_requests(self):
         url = "https://m.wandougongzhu.cn/list/ajaxGoods"
-        requests = []
-        for i in range(1, 20):
-            myFormData = {
-                'brand': '',
-                'cat_id': '426',
-                'page': str(i),
-                'sort': 'general',
-                'promote': '',
-                'seller': '',
-                'count': '20',
-                'cat': '426',
-            }
-
-            yield scrapy.FormRequest(url,callback=self.parse_item,formdata=myFormData,headers=self.headers)
+        #目前获取不到共有几页  太复杂 直接设置页数
+        for i in range(0, 50):
+            if self.dict['is_crawl']:
+                myFormData = {
+                    'brand': '',
+                    'cat_id': '426',
+                    'page': str(i+1),
+                    'sort': 'general',
+                    'promote': '',
+                    'seller': '',
+                    'count': '20',
+                    'cat': '426',
+                }
+                yield scrapy.FormRequest(url,callback=self.parse_item,formdata=myFormData,headers=self.headers)
 
 
     def parse_item(self,response):
         body = response.body.decode('utf-8')
         body_dict = json.loads(body, strict=False)
-        for data in body_dict['data']['goods']['list']:
-            wandou_item = WandougongzhuItem()
-            wandou_item['goods_slogan'] = data['slogan']
-            wandou_item['brand_name'] = data['brand_name']
-            wandou_item['goods_price'] = str(data['final_price'])
-            wandou_item['goods_title'] = data['goods_name']
-            yield wandou_item
+        data_list = body_dict['data']['goods']['list']
+        if data_list:
+            for data in data_list:
+                wandou_item = WandougongzhuItem()
+                wandou_item['goods_slogan'] = data['slogan']
+                wandou_item['brand_name'] = data['brand_name']
+                wandou_item['goods_price'] = str(data['final_price'])
+                wandou_item['goods_title'] = data['goods_name']
+                yield wandou_item
+        else:
+            self.dict['is_crawl'] = False
 
 
