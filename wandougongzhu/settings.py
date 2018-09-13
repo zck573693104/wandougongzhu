@@ -56,9 +56,10 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'wandougongzhu.middlewares.WandougongzhuDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 543,
+   'wandougongzhu.middlewares.WandougongzhuDownloaderMiddleware':125,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html

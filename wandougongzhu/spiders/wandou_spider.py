@@ -1,4 +1,4 @@
-from time import sleep, time
+import time
 
 import scrapy, re, io, sys
 
@@ -11,9 +11,10 @@ from wandougongzhu.items import WandougongzhuItem
 
 class woniuSplider(scrapy.Spider):
     name = "wandou_spider"
+    cat_ids = 0
     def start_requests(self):
         headers = {'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-                   'cookie': 'ch=bdsem_pc; user_key=caa79cc27517c8b1aef82ae9dc49d278; UM_distinctid=164da8a2564992-0651de478967de-514d2f1f-1fa400-164da8a25663f; img_fmt=webp; wct=bdsem_pc; CNZZDATA1257364836=195384166-1532760695-https%253A%252F%252Fm.wandougongzhu.cn%252F%7C1532922988',
+                   'cookie': 'user_key=84702303b89bbac242f622b4deafb53e',
                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36',
                    'referer': 'https://m.wandougongzhu.cn/category/cat?cat_id=values',
                    'origin': 'https://m.wandougongzhu.cn',
@@ -21,9 +22,11 @@ class woniuSplider(scrapy.Spider):
                    }
         url = "https://m.wandougongzhu.cn/list/ajaxGoods"
         #目前获取不到共有几页  太复杂 直接设置页数
-        for cat_id in range(423,500):
+        for cat_id in range(450,452):
+            self.cat_ids = cat_id
             headers['referer'] = str(headers['referer']).replace("values",str(cat_id))
-            for i in range(1, 50):
+            time.sleep(3)
+            for i in range(1, 10):
                 myFormData = {
                     'brand': '',
                     'cat_id': str(cat_id),
@@ -34,7 +37,7 @@ class woniuSplider(scrapy.Spider):
                     'count': '20',
                     'cat': str(cat_id),
                 }
-                time.sleep(5)
+
                 yield scrapy.FormRequest(url,callback=self.parse_item,formdata=myFormData,headers=headers)
 
 
@@ -49,6 +52,7 @@ class woniuSplider(scrapy.Spider):
                 wandou_item['brand_name'] = data['brand_name']
                 wandou_item['goods_price'] = str(data['final_price'])
                 wandou_item['goods_title'] = data['goods_name']
+                wandou_item['cat_id'] = str(self.cat_ids)
                 yield wandou_item
 
 

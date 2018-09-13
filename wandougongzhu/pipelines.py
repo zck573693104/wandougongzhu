@@ -1,10 +1,8 @@
-from twisted.enterprise import adbapi
 import pymysql
 import pymysql.cursors
-from scrapy.crawler import Settings as settings
 class WandougongzhuPipeline(object):
-    quotesInsert = '''insert into wandou(title,price,name,brand)
-                            values('{goods_title}','{goods_price}','{goods_slogan}','{brand_name}')'''
+    quotesInsert = '''insert into wandou(cat_id,title,price,name,brand)
+                            values('{cat_id}','{goods_title}','{goods_price}','{goods_slogan}','{brand_name}')'''
 
     def __init__(self, settings):
         self.settings = settings
@@ -13,6 +11,7 @@ class WandougongzhuPipeline(object):
         print(item)
         if spider.name == "wandou_spider":
             sqltext = self.quotesInsert.format(
+                cat_id = pymysql.escape_string(item['cat_id']),
                 goods_title=pymysql.escape_string(item['goods_title']),
                 goods_price=pymysql.escape_string(item['goods_price']),
                 goods_slogan=pymysql.escape_string(item['goods_slogan']),

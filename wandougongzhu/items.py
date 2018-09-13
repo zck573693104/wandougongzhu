@@ -16,3 +16,5 @@ class WandougongzhuItem(scrapy.Item):
     goods_price = scrapy.Field()
 
     brand_name = scrapy.Field()
+
+    cat_id = scrapy.Field()
